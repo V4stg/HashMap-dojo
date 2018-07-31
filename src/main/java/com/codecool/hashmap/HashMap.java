@@ -67,7 +67,7 @@ class HashMap<K, V> {
 
     int getHash(K key) {
 
-        return key.hashCode() % bucketSize;
+        return Math.abs(key.hashCode() % bucketSize);
     }
 
 // + other functions, like clearAll(), delete(),..
