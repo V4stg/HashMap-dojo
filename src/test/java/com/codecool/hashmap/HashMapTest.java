@@ -1,5 +1,6 @@
 package com.codecool.hashmap;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.LinkedList;
@@ -8,9 +9,16 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class HashMapTest {
 
+    private HashMap<Object, Object> hashMap;
+
+    @BeforeEach
+    void setUp() {
+        hashMap = new HashMap<>();
+    }
+
     @Test
     void testGetHash() {
-        HashMap<Object, Object> hashMap = new HashMap<>();
+
         Object obj1 = "Laci";
         Object obj2 = 5;
 
@@ -23,7 +31,6 @@ class HashMapTest {
 
     @Test
     void testAddThrowsException() {
-        HashMap<Object, Object> hashMap = new HashMap<>();
 
         hashMap.add("Laci", 2);
         assertThrows(IllegalArgumentException.class, () -> hashMap.add("Laci", 2));
@@ -31,7 +38,6 @@ class HashMapTest {
 
     @Test
     void testAdd() {
-        HashMap<Object, Object> hashMap = new HashMap<>();
 
         hashMap.add("Laci", 2);
 
@@ -50,7 +56,6 @@ class HashMapTest {
 
     @Test
     void testGetValueThrowException() {
-        HashMap<Object, Object> hashMap = new HashMap<>();
 
         hashMap.add("Laci", 2);
         assertThrows(IllegalArgumentException.class, () -> hashMap.getValue("Barna"));
@@ -58,7 +63,6 @@ class HashMapTest {
 
     @Test
     void testGetValue() {
-        HashMap<Object, Object> hashMap = new HashMap<>();
 
         hashMap.add("Barna", 5);
         hashMap.add("Laci", 2);
@@ -67,5 +71,13 @@ class HashMapTest {
         assertEquals(2, hashMap.getValue("Laci"));
         assertEquals(5, hashMap.getValue("Barna"));
         assertEquals("három", hashMap.getValue(3));
+    }
+
+    @Test
+    void testGetHashHandlingNegativeIntegers() {
+
+        for (int i = 0; i < 5000; i++) {
+            hashMap.add(i + "hello", i);
+        }
     }
 }
