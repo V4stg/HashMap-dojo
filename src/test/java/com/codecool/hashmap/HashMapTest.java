@@ -3,8 +3,6 @@ package com.codecool.hashmap;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.LinkedList;
-
 import static org.junit.jupiter.api.Assertions.*;
 
 class HashMapTest {
@@ -22,11 +20,20 @@ class HashMapTest {
         Object obj1 = "Laci";
         Object obj2 = 5;
 
-        int expected1 = obj1.hashCode() % hashMap.bucketSize;
-        int expected2 = obj2.hashCode() % hashMap.bucketSize;
+        assertEquals(getExpected(obj1), hashMap.getHash(obj1));
+        assertEquals(getExpected(obj2), hashMap.getHash(obj2));
+    }
 
-        assertEquals(expected1, hashMap.getHash(obj1));
-        assertEquals(expected2, hashMap.getHash(obj2));
+    private static int getExpected(Object obj1) {
+        return Math.abs(obj1.hashCode() % 16);
+    }
+
+    @Test
+    void testGetHashHandlingNegativeIntegers() {
+
+        for (int i = 0; i < 5000; i++) {
+            hashMap.add(i + "hello", i);
+        }
     }
 
     @Test
@@ -39,19 +46,9 @@ class HashMapTest {
     @Test
     void testAdd() {
 
+        hashMap.add("Barna", 5);
         hashMap.add("Laci", 2);
-
-        KeyValue stored1 = null;
-
-        for (LinkedList<KeyValue> element : hashMap.elements) {
-            if (!element.isEmpty()) {
-                stored1 = element.pop();
-            }
-        }
-
-        assert stored1 != null;
-        assertEquals("Laci", stored1.key);
-        assertEquals(2, stored1.value);
+        hashMap.add(3, "három");
     }
 
     @Test
@@ -64,9 +61,7 @@ class HashMapTest {
     @Test
     void testGetValue() {
 
-        hashMap.add("Barna", 5);
-        hashMap.add("Laci", 2);
-        hashMap.add(3, "három");
+        testAdd();
 
         assertEquals(2, hashMap.getValue("Laci"));
         assertEquals(5, hashMap.getValue("Barna"));
@@ -74,10 +69,21 @@ class HashMapTest {
     }
 
     @Test
-    void testGetHashHandlingNegativeIntegers() {
+    void testDelete() {
 
-        for (int i = 0; i < 5000; i++) {
-            hashMap.add(i + "hello", i);
-        }
+        testAdd();
+
+        hashMap.delete("Laci");
+        hashMap.delete("Barna");
+    }
+
+    @Test
+    void testDeleteThrowsException() {
+
+        assertThrows(IllegalArgumentException.class, () -> hashMap.delete("Laci"));
+
+        hashMap.add(2, "kettő");
+
+        assertThrows(IllegalArgumentException.class, () -> hashMap.delete(1));
     }
 }
